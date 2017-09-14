@@ -21,4 +21,4 @@ For example:
 ```bash
 python pcap2html.py ~/Desktop/mycapture.pcap
 ```
-generates ```~/Desktop/mycapture.pcap.xml``` and then launches Safari to display the contents of the capture file as HTML using the Wireshark's pdml2html.xls template.
+generates ```~/Desktop/mycapture.pcap.xml``` and then launches Safari to display the contents of the capture file as HTML using Wireshark's pdml2html.xls template.
