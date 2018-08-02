@@ -14,11 +14,13 @@ python pcap2html.py <input_file>
 ```
 where ```<input_file>``` is a capture file.
 
-The script generates an XML file that is then used to display the contents of the capture as HTML in Safari.
-
 For example:
 
 ```bash
 python pcap2html.py ~/Desktop/mycapture.pcap
 ```
-generates ```~/Desktop/mycapture.pcap.xml``` and then launches Safari to display the contents of the capture file as HTML using Wireshark's pdml2html.xls template.
+generates ```~/Desktop/mycapture.pcap.html```.
+
+## Notes
+
+The conversion requires an intermediate transformation to XML, which is currently done in memory. As a result, conversion of large files may be very slow.
