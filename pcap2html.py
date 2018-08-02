@@ -1,4 +1,5 @@
-#
+#!/usr/bin/python
+
 # pcap2html.py
 # This script generates an HTML view of the contents of a PCAP file.
 # Based on Eric Garnel's BASH script.
@@ -25,6 +26,9 @@
 
 import os
 import sys
+import re
+import tempfile
+import lxml.etree as et
 from shutil import copyfile
 from subprocess import call
 
@@ -36,14 +40,32 @@ if __name__ == "__main__":
 
     pcapfile = sys.argv[1]
     xmlfile = pcapfile + ".xml"
+    htmlfile = pcapfile + ".html"
 
-    # Copy pdml2html.xsl
-    template_source = "/Applications/Wireshark.app/Contents/Resources/share/wireshark/pdml2html.xsl"
-    template_target = os.path.dirname(pcapfile) + "/pdml2html.xsl"
-    copyfile(template_source, template_target)
+    # Create temporary file
+    temp = tempfile.NamedTemporaryFile(dir='/tmp')
 
-    # Convert pcap to html
-    f = open(xmlfile, "wb")
-    call(["tshark", "-I", "-T", "pdml", "-r", pcapfile], stdout=f)
-    call(["open", "-a", "Safari", xmlfile])
+    try:
+        # Convert pcap to pdml
+        call(["tshark", "-I", "-T", "pdml", "-r", pcapfile], stdout=temp)
 
+        # Convert pdml to html
+        dom = et.parse(temp.name)
+        xslt = et.parse("/Applications/Wireshark.app/Contents/Resources/share/wireshark/pdml2html.xsl")
+        transform = et.XSLT(xslt)
+        html = et.tostring(transform(dom), pretty_print=True)
+
+        # Fix title
+        html = re.sub('<title>.*</title>', '<title>' + pcapfile + '</title>', html)
+
+        # Fix javascript declaration
+        html = html.replace('type="text/javascript"/>', 'type="text/javascript"/></script>', 1)
+
+        # Fix javascript functions
+        html = html.replace('length &gt; 0', 'length > 0')
+
+        with open(htmlfile, "wb") as f:
+            f.write(html)
+
+    finally:
+        temp.close()
