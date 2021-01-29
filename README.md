@@ -1,5 +1,5 @@
 # pcap2html
-This is Python script that generates an HTML view of the contents of a capture file.
+This is a Python script that generates an HTML view of the contents of a capture file.
 
 ![HTML View of Capture File](../master/pcap2html-example.png "HTML View of Capture File")
 
